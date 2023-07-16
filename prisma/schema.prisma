@@ -18,7 +18,7 @@ model User {
 
 model Lang {
   id      Int      @id @default(autoincrement())
-  email   String   @unique
+  ident   String   @unique
   name    String
   lexemes Lexeme[]
 }
