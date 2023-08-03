@@ -1,65 +1,51 @@
--- postgresql 15.1
+-- sqlite-compatible
 
-CREATE DATABASE yacola;
-CREATE SCHEMA langdoc;
-ALTER SCHEMA langdoc OWNER TO postgres;
-SET search_path TO pg_catalog,public,langdoc;
-
-CREATE TABLE langdoc.language (
-	id serial NOT NULL,
-	CONSTRAINT language_pk PRIMARY KEY (id)
+CREATE TABLE language (
+	id INTEGER PRIMARY KEY ASC,
+	name TEXT
 );
-ALTER TABLE langdoc.language OWNER TO postgres;
 
-
-CREATE TABLE langdoc.lexeme (
-	id serial NOT NULL,
-	CONSTRAINT lexeme_pk PRIMARY KEY (id)
+CREATE TABLE feature (
+	id INTEGER PRIMARY KEY ASC,
+	name TEXT
 );
-ALTER TABLE langdoc.lexeme OWNER TO postgres;
 
-
-CREATE TABLE langdoc.feature (
-	id serial NOT NULL,
-	CONSTRAINT feature_pk PRIMARY KEY (id)
+CREATE TABLE feature_possible_values (
+	id INTEGER PRIMARY KEY ASC,
+  	feature_id INTEGER ,
+	value TEXT,
+  	FOREIGN KEY(feature_id) REFERENCES feature(id)
 );
-ALTER TABLE langdoc.feature OWNER TO postgres;
 
 
-CREATE TABLE langdoc.feature_possible_values (
-	id serial,
-	value text,
-	feature_id integer
-
+CREATE TABLE feature_lang_implementation (
+	id INTEGER PRIMARY KEY ASC,
+	lang_id INTEGER,
+	feature_val_id INTEGER,
+	FOREIGN KEY(lang_id) REFERENCES language(id),
+  	FOREIGN KEY(feature_val_id) REFERENCES feature_possible_values(id)
 );
-ALTER TABLE langdoc.feature_possible_values OWNER TO postgres;
-ALTER TABLE langdoc.feature_possible_values ADD CONSTRAINT feature FOREIGN KEY (feature_id)
-REFERENCES langdoc.feature (id) MATCH SIMPLE
-ON DELETE NO ACTION ON UPDATE NO ACTION;
 
-
-CREATE TABLE langdoc.feature_lang_implementation (
-	id serial,
-	lang_id serial,
-	feature_val serial
+CREATE TABLE pos (
+	id INTEGER PRIMARY KEY ASC,
+	name TEXT
 );
-ALTER TABLE langdoc.feature_lang_implementation ADD CONSTRAINT feat_val FOREIGN KEY (feature_val)
-REFERENCES langdoc.feature_possible_values (id) MATCH SIMPLE
-ON DELETE NO ACTION ON UPDATE NO ACTION;
 
-ALTER TABLE langdoc.feature_lang_implementation ADD CONSTRAINT lang FOREIGN KEY (lang_id)
-REFERENCES langdoc.language (id) MATCH SIMPLE
-ON DELETE NO ACTION ON UPDATE NO ACTION;
-
-ALTER TABLE langdoc.feature_lang_implementation OWNER TO postgres;
-
-CREATE TABLE langdoc.pos (
-	id serial,
-	pos_id serial
-
+CREATE TABLE pos_feature_map (
+	lang_id INTEGER,
+	pos_id INTEGER,
+    feat_id INTEGER,
+  	FOREIGN KEY(lang_id) REFERENCES language(id),
+  	FOREIGN KEY(pos_id) REFERENCES pos(id),
+    FOREIGN KEY(feat_id) REFERENCES feature(id),
+    PRIMARY KEY (lang_id, pos_id, feat_id)
 );
-ALTER TABLE langdoc.pos OWNER TO postgres;
 
-
-
-
+CREATE TABLE lexeme (
+	id INTEGER PRIMARY KEY ASC,
+	lang_id INTEGER,
+	pos_id INTEGER,
+	lemma  TEXT,
+	FOREIGN KEY(lang_id) REFERENCES language(id),
+  	FOREIGN KEY(pos_id) REFERENCES pos(id)
+);
