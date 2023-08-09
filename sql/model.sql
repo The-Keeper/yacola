@@ -38,7 +38,13 @@ CREATE TABLE pos_feature_map (
   	FOREIGN KEY(lang_id) REFERENCES language(id),
   	FOREIGN KEY(pos_id) REFERENCES pos(id),
     FOREIGN KEY(feat_id) REFERENCES feature(id),
-    PRIMARY KEY (lang_id, pos_id, feat_id)
+    PRIMARY KEY (lang_id, pos_id, feat_id),
+);
+
+CREATE TABLE lemma_replacement_rule (
+    id INTEGER PRIMARY KEY ASC,
+    regex_match TEXT,
+    regex_replace TEXT
 );
 
 CREATE TABLE lexeme (
